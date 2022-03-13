@@ -21,13 +21,14 @@ class UserController extends Controller
         ]);
     }
 
-    public function changeStatus(User $user,$status){
-        $user->status=trim($status);
-        $user->save();
+    public function changeStatus($user,$status){
+        return User::whereId($user)->update([
+            'status'=>trim($status)
+        ]);
     }
 
     public function store(Request $request){
-        User::updateorcreate(['id'=>$request->id],[
+        return User::updateorcreate(['id'=>$request->id],[
             'first_name' => $request->first_name, 
             'last_name' => $request->last_name,
             'username' => $request->username, 
@@ -36,6 +37,7 @@ class UserController extends Controller
             'email' => $request->email, 
             'password' => (empty($request->id) ? Hash::make('password') : $this->findUser($request->id)->password),
             'user_type'=>$request->user_type,
+            'privilege'=>$request->privilege,
             'status'=>'activate',
         ]);
     }
@@ -57,5 +59,18 @@ class UserController extends Controller
             ]);
         }
         
+    }
+
+    public function privilegeStatus($id){
+        return response()->json(
+            User::whereId($id)->select('id','privilege')->first()
+        );
+    }
+
+    public function privilegeUpdate(Request $request){
+        return User::whereId($request->id)
+        ->update([
+            'privilege'=>$request->privilegeUpdate
+        ]);
     }
 }

@@ -10,8 +10,8 @@
             <div class="modal-body">
                 <div class="text-center">
                     <p class="showMessage"></p>
-                    <button class="btn btn-sm btn-primary btnSave">Save</button>&nbsp;&nbsp;
-                <button class="btn btn-sm btn-warning" data-dismiss="modal">Close</button>
+                    <button class="btn btn-primary btnSave">Save</button>&nbsp;&nbsp;
+                <button class="btn btn-warning" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div><!-- /.modal-content -->

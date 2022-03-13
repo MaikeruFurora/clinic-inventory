@@ -1,96 +1,149 @@
-@extends('layouts.app')
-@section('title','Manage Patient')
+@extends('layout.app')
+@section('title','Medicine Record')
 @section('moreCss')
-      <!-- DataTables -->
-      <link href="{{ asset('assets/plugins/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
-      <link href="{{ asset('assets/plugins/datatables/buttons.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
-      <!-- Responsive datatable examples -->
-      <link href="{{ asset('assets/plugins/datatables/responsive.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
+        <!-- DataTables -->
+        <link rel="stylesheet" href="{{ asset('assets/modules/datatables/datatables.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css') }}">
 @endsection
+@include('administrator.medicine.modalForm')
 @section('content')
-{{-- @include('administrator.component.modal') --}}
-<h5 class="page-title">Medicine Record</h5>
-<div class="row">
-    <div class="col-12">
-        <div class="card m-b-30">
-            <div class="card-body">
+<section class="section">
+    <h2 class="section-title">Medicine Record</h2>
 
-                <h4 class="mt-0 header-title">List of Medicine</h4>
-                <p class="text-muted m-b-30 font-14">DataTables has most features enabled by
-                    default, so all you need to do to use it with your own tables is to call
-                    the construction function: <code>$().DataTable();</code>.
-                </p>
-
-                <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:12px">
-                    <thead>
-                    <tr>
-                        <th>id</th>
-                        <th>Medicine Name</th>
-                        <th>Medicine Pharma</th>
-                        <th>Medicine Cabinet</th>
-                        <th>Unit tpe</th>
-                        <th>Unit Quantity</th>
-                        <th>Buy Price</th>
-                        <th>Sell Price</th>
-                        <th>Type</th>
-                        <th>Expiration date</th>
-                        <th>Action</th>
-                    </tr>
-                    </thead>
-                     <tbody></tbody>
-                </table>
-
+    <div class="section-body">
+        <div class="row">
+           <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-pills" style="font-size: 20px"></i>&nbsp;&nbsp;List of Medicine</h4>
+                    <div class="card-header-action"><button class="btn btn-primary" name="btnAdd"><i class="fas fa-pills"></i> Create Medicine</button></div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:12px">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>MEDICINE NAME</th>
+                                <th>MEDICINE PHARMA</th>
+                                <th>MEDICINE CABINET</th>
+                                <th>UNIT QUANTITY</th>
+                                <th>BUY PRICE</th>
+                                <th>SELL PRICE</th>
+                                <th>EXPIRATION DATE</th>
+                                <th>ADDED BY</th>
+                                <th>ACTION</th>
+                            </tr>
+                            </thead>
+                             <tbody></tbody>
+                        </table>
+                    </div>
+    
+                </div>
             </div>
+           </div>
         </div>
-    </div> <!-- end col -->
-</div> <!-- end row -->
+    </div>
+</section>
 @endsection
-
-@section('morejs')
-   <!-- Required datatable js -->
-   <script src="{{  asset('assets/plugins/datatables/jquery.dataTables.min.js') }}"></script>
-   <script src="{{  asset('assets/plugins/datatables/dataTables.bootstrap4.min.js') }}"></script>
-   <!-- Responsive examples -->
-   <script src="{{  asset('assets/plugins/datatables/dataTables.responsive.min.js') }}"></script>
-   <script src="{{  asset('assets/plugins/datatables/responsive.bootstrap4.min.js') }}"></script>
+@section('moreJs')
+    <script src="{{ asset('assets/modules/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('assets/modules/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}"></script>
 
    <script>
-       $("#datatable").DataTable({
-            pageLength: 7,
-            lengthMenu: [ 7,10, 25, 50, 75, 100 ],
-            ajax: "medicine/list",
+       "use strict"
+       let datatableMedicine = $("#datatable").DataTable({
+        processing: true,
+            serverSide: true,
+            ajax:{
+                url:'medicine/list',
+                dataType: "json",
+                type: "POST",
+                data:{ _token: $('input[name="_token"]').val() }
+            },
             columns: [
-                { data:"id" },
+                { data:"barcode" },
                 { data:"medicine_name" },
                 { data:"medicine_pharma" },
                 { data:"medicine_cabinet" },
-                { data:"unit_type" },
                 { data:"unit_qty" },
-                { data:"buy_price" },
-                { data:"sell_price" },
-                { data:"type" },
+                { 
+                    data:null,
+                    render:function(data){
+                        return `&#8369; `+data.buy_price+ ` .00`
+                    }
+                },
+                { 
+                    data:null,
+                    render:function(data){
+                        return `&#8369; `+data.sell_price+ ` .00`
+                    }
+                },
                 { data:"expiration_date" },
+                { data:"added_by" },
                
                 {
                      data: null,
                      render:function(data){
                          return `
-                         <div class="btn-group" role="group">
-                            <button id="btnGroupDrop1" type="button" 
-                            style="font-size:12px"
-                            class="btn btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Action
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <a class="dropdown-item" href="#">Medical Record</a>
-                            <a class="dropdown-item" href="#">Dropdown link</a>
-                            </div>
-                        </div>
+                         <button class="btn btn-warning btn-sm" name="btnEdit" value="${data.id}"><i class="fas fa-edit"></i>Edit</button>
                          `
                      }
                 },
             ]
        });
 
+       $('button[name="btnAdd"]').on('click',function(){
+           $("#medicineModalTitle").html('<i class="fas fa-pills" style="font-size:15px"></i> Create Medicine')
+           $("#medicineForm button[type='submit']").text("Create Medicine");
+           $("#medicineModal").modal("show")
+       })
+
+       $('#medicineForm').on('submit',function(e){
+            e.preventDefault()
+            $.ajax({
+                url:'medicine/store',
+                type:'POST',
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
+                cache: false,
+                beforeSend: setPreload ($("#medicineForm button[type='submit']"))
+           }) .done(function (data) {
+                datatableMedicine.ajax.reload()
+                getToast("success", "Success","Successful save medicine");
+                $("#medicineForm button[type='submit']").text("Create Medicine").attr("disabled", false);
+                $("#medicineModal").modal("hide")
+                $("#medicineForm")[0].reset()
+            })
+            .fail(function (jqxHR, textStatus, errorThrown) {
+                getToast("error", "Eror", errorThrown);
+                $("#medicineForm button[type='submit']").text("Create Medicine").attr("disabled", false);
+            });
+       })
+
+       $(document).on('click','button[name="btnEdit"]',function(){
+        $("#medicineModalTitle").html('<i class="fas fa-edit" style="font-size:15px"></i> Edit Medicine')
+        $("#medicineForm button[type='submit']").text("Update Medicine");
+        $.ajax({
+                url:`medicine/edit/${$(this).val()}`,
+                type:'GET'
+            }).done(function(data){
+                $('#medicineForm input[name="id"]').val(data.id)
+                $('input[name="medicine_name"]').val(data.medicine_name)
+                $('input[name="medicine_pharma"]').val(data.medicine_pharma)
+                $('input[name="medicine_cabinet"]').val(data.medicine_cabinet)
+                $('input[name="unit_qty"]').val(data.unit_qty)
+                $('input[name="buy_price"]').val(data.buy_price)
+                $('input[name="sell_price"]').val(data.sell_price)
+                $('input[name="barcode"]').val(data.barcode)
+                $('input[name="expiration_date"]').val(data.expiration_date)
+                $("#medicineModal").modal("show")
+            }) .fail(function (jqxHR, textStatus, errorThrown) {
+                getToast("error", "Eror", errorThrown);
+                $("#medicineForm button[type='submit']").text("Update Medicine").attr("disabled", false);
+            });
+       })
    </script>
 @endsection

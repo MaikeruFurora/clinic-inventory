@@ -17,7 +17,7 @@ class PatientFactory extends Factory
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'sex' => $this->faker->randomElement($array = array('Male', 'Female')),
-            'date_of_birth' => date("m/d/Y", strtotime($this->faker->date())),
+            'date_of_birth' => date("d/m/Y", strtotime($this->faker->date())),
             'status' => $this->faker->randomElement($array = array('Single', 'Married')),
             'address' => $this->faker->streetName(),
             'contact_no' => '00'+$this->faker->numberBetween($min = 8888888888, $max = 9999999999),

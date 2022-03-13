@@ -24,6 +24,7 @@ class User extends Authenticatable
         'contact_no',
         'address',
         'user_type',
+        'privilege',
         'status',
         'email',
         'password',
@@ -46,5 +47,11 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'privilege' => 'array',
     ];
+
+    public function getFullnameAttribute()
+    {
+        return ucwords("{$this->first_name} {$this->last_name}");
+    }
 }

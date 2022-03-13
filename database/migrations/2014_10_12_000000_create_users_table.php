@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('user_type',45);
             $table->string('status',45)->dafault('active');
+            $table->json('privilege')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

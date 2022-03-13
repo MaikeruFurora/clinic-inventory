@@ -26,7 +26,7 @@ class CreateMedicinesTable extends Migration
             $table->string('unit_type');
             $table->string('buy_price');
             $table->string('sell_price');
-            $table->string('type');
+            $table->string('barcode');
             $table->string('expiration_date');
             
             $table->timestamps();
