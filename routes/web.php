@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 
 // Auth route
 Route::middleware(['guest:web', 'preventBackHistory'])->name('auth.')->group(function () {
-    Route::get('/', function () {return view('auth/login');})->name('form');
+    Route::get('/', function () {return view('auth/login1');})->name('form');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
 });
 
