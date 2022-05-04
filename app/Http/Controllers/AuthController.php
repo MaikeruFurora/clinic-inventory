@@ -22,20 +22,16 @@ class AuthController extends Controller
         if (Auth::guard('web')->attempt($request->except(['_token','_method']))) {
             
             $userType = User::select('user_type')->whereId(Auth::user()->id)->where('status','activate')->pluck('user_type')->first();
-            switch ($userType) {
-                case 'administrator':
-                      return redirect()->route('administrator.dashboard');
-                    break;
-                case 'nurse':
-                      return redirect()->route('nurse.dashboard');
-                    break;
-                default:
-                    if (Auth::guard('web')->check()) {
-                        Auth::guard('web')->logout();
-                    }
-                     return redirect()->route('auth.form')->with('msg','You are not allowed to access this system');
-                    break;
+            
+            if ($userType) {
+                return redirect()->route('authuser.dashboard');
+            } else {
+                if (Auth::guard('web')->check()) {
+                    Auth::guard('web')->logout();
+                }
+                 return redirect()->route('auth.form')->with('msg','You are not allowed to access this system');
             }
+         
             
         }else{
             return back()->with('msg', 'Login credentials are invalid');

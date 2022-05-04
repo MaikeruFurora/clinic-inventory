@@ -6,8 +6,8 @@
 <link rel="stylesheet" href="{{ asset('assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css') }}">
 @endsection
-@include('administrator.patient.patientModal')
 @section('content')
+@include('administrator.patient.patientModal')
 <section class="section">
     <h2 class="section-title">Patient Record</h2>
 
@@ -46,8 +46,8 @@
                                 <th>#</th>
                                 <th>NAME</th>
                                 <th>DATE OF BIRTH</th>
-                                <th>STATUS</th>
                                 <th>AGE</th>
+                                <th>STATUS</th>
                                 <th>SEX</th>
                                 <th>ADDRESS</th>
                                 <th>CONTACT NO.</th>

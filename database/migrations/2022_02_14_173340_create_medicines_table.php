@@ -20,13 +20,12 @@ class CreateMedicinesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
 
             $table->string('medicine_name');
-            $table->string('medicine_pharma');
-            $table->string('medicine_cabinet');
+            $table->string('stock');
             $table->string('unit_qty');
             $table->string('unit_type');
             $table->string('buy_price');
             $table->string('sell_price');
-            $table->string('barcode');
+            $table->text('barcode');
             $table->string('expiration_date');
             
             $table->timestamps();

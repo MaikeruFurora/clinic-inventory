@@ -1,8 +1,8 @@
 @extends('layout.app')
 @section('title','Manage User')
+@section('content')
 @include('administrator.component.modal')
 @include('administrator.user.modalForm')
-@section('content')
 <section class="section">
     <h2 class="section-title">Manage User</h2>
 

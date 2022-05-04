@@ -6,11 +6,14 @@
         <link rel="stylesheet" href="{{ asset('assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css') }}">
 @endsection
-@include('administrator.medicine.modalForm')
 @section('content')
+@include('administrator.medicine.modalForm')
 <section class="section">
+    <div class="float-right">
+        <button class="btn-expired btn btn-icon icon-right btn-danger"><i class="fa fa-print"></i> Expired</button>
+        <button class="btn-running-out-of-stock btn btn-icon icon-right btn-success"><i class="fa fa-print"></i> Running out of Stock</button>
+    </div>
     <h2 class="section-title">Medicine Record</h2>
-
     <div class="section-body">
         <div class="row">
            <div class="col-12">
@@ -20,25 +23,42 @@
                     <div class="card-header-action"><button class="btn btn-primary" name="btnAdd"><i class="fas fa-pills"></i> Create Medicine</button></div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:12px">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>MEDICINE NAME</th>
-                                <th>MEDICINE PHARMA</th>
-                                <th>MEDICINE CABINET</th>
-                                <th>UNIT QUANTITY</th>
-                                <th>BUY PRICE</th>
-                                <th>SELL PRICE</th>
-                                <th>EXPIRATION DATE</th>
-                                <th>ADDED BY</th>
-                                <th>ACTION</th>
-                            </tr>
-                            </thead>
-                             <tbody></tbody>
-                        </table>
-                    </div>
+                    <ul class="nav nav-tabs" id="myTab2" role="tablist">
+                        <li class="nav-item">
+                          <a class="nav-link active" id="home-tab2" data-toggle="tab" href="#home2" role="tab" aria-controls="home" aria-selected="true">Stock Available</a>
+                        </li>
+                        <li class="nav-item">
+                            <a  class="nav-link " id="profile-tab2" href="{{ route('authuser.expired') }}">Expired&nbsp;&nbsp;<small class="badge badge-warning p-1">{{ $te }}</small></a>
+                        </li>
+                        <li class="nav-item">
+                          <a class="nav-link" id="contact-tab2" href="{{ route('authuser.runningOutOfStock') }}">Running out of stock&nbsp;&nbsp;<small class="badge badge-warning p-1">{{ $tr }}</small></a>
+                        </li>
+                      </ul>
+                      <div class="tab-content tab-bordered" id="myTab3Content">
+                        <div class="tab-pane fade show active" id="home2" role="tabpanel" aria-labelledby="home-tab2">
+                            <div class="table-responsive">
+                                <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;font-size:11px">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>MEDICINE NAME</th>
+                                        <th>STOCK</th>
+                                        <th>UNIT QUANTITY</th>
+                                        <th>BUY PRICE</th>
+                                        <th>SELL PRICE</th>
+                                        <th>EXPIRATION DATE</th>
+                                        <th>ADDED BY</th>
+                                        <th>ACTION</th>
+                                    </tr>
+                                    </thead>
+                                     <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                     
+                       
+                      </div>
+                     
     
                 </div>
             </div>
@@ -54,7 +74,12 @@
    <script>
        "use strict"
        let datatableMedicine = $("#datatable").DataTable({
-        processing: true,
+            rowCallback: function(row, data, index){
+            if(data.unit_qty<11){
+                $(row).find('td:eq(4)').css('color', 'red');
+            }
+            },
+            processing: true,
             serverSide: true,
             ajax:{
                 url:'medicine/list',
@@ -65,8 +90,7 @@
             columns: [
                 { data:"barcode" },
                 { data:"medicine_name" },
-                { data:"medicine_pharma" },
-                { data:"medicine_cabinet" },
+                { data:"stock" },
                 { data:"unit_qty" },
                 { 
                     data:null,
@@ -145,5 +169,28 @@
                 $("#medicineForm button[type='submit']").text("Update Medicine").attr("disabled", false);
             });
        })
+
+
+     $('.btn-expired').on('click',function(){
+         console.log('sas')
+        let myurl = `expired/print`
+        popupCenter({
+            url: myurl,
+            title: "Expired Medicine",
+            w: 1400,
+            h: 800,
+        });
+     })
+
+     $('.btn-running-out-of-stock').on('click',function(){
+         console.log('sas')
+        let myurl = `running-out-of-stock/print`
+        popupCenter({
+            url: myurl,
+            title: "Running out of stock Medicine",
+            w: 1400,
+            h: 800,
+        });
+     })
    </script>
 @endsection

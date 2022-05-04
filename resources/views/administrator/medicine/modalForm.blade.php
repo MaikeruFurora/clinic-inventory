@@ -23,17 +23,16 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col-6">
-                        <label for="">Medicine Pharma</label>
-                        <input type="text" class="form-control" required name="medicine_pharma">
+                        <label for="">Stock</label>
+                         <select id="my-select" class="form-control" name="stock">
+                                <option value="Medicine Cabinet">Medicine Cabinet</option>
+                                <option value="Medicine Pharma">Medicine Pharma</option>
+                            </select>
                     </div>
                     <div class="form-group col-6">
-                        <label for="">Medicine Cabinet</label>
-                        <input type="text" class="form-control" required name="medicine_cabinet">
+                        <label for="">Unit Quantity</label>
+                        <input type="number" class="form-control" required name="unit_qty">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="">Unit Quantity</label>
-                    <input type="number" class="form-control" required name="unit_qty">
                 </div>
                 <div class="form-row">
                     <div class="form-group col-6">

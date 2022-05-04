@@ -72,12 +72,11 @@
                         <div class="row mb-4">
                             <div class="col">
                                 <select id="" class="form-control" name="month">
-                                    <option value="null">Select Month</option>
                                     <option value="01">January</option>
                                     <option value="02">February</option>
                                     <option value="03">March</option>
                                     <option value="04">April</option>
-                                    <option value="05">Mya</option>
+                                    <option value="05">May</option>
                                     <option value="06">June</option>
                                     <option value="07">July</option>
                                     <option value="08">August</option>
@@ -182,6 +181,10 @@
    <script src="{{ asset('assets/modules/chocolat/dist/js/jquery.chocolat.min.js') }}"></script>
    <script>
        "use strict"
+       $("select[name='month'] option").each(function(){
+         $(this).val()==("0" + (new Date().getMonth() + 1)).slice(-2)? $(this).attr('selected', true):''
+       })
+
        $("#mycard-dimiss").hide()
        let currentYear= new Date().getFullYear(); 
        $(".btnClear").hide()
@@ -321,13 +324,19 @@
 
        let exepenseTable = $("#datatable").DataTable({
             processing: true,
+            serverSide: true,
             language: {
                 processing: `
                     <div class="spinner-border spinner-border-sm" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>`,
             },
-            ajax: `expenses/list/${currentYear}/null`,
+            ajax: {
+                url:`expenses/list/${currentYear}/${("0" + (new Date().getMonth() + 1)).slice(-2)}`,
+                dataType: "json",
+                type: "POST",
+                data:{ _token: $('input[name="_token"]').val() }
+            },
             columns: [
                 { data:"description" },
                 { data:"amount" },

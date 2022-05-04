@@ -6,8 +6,8 @@
         <link rel="stylesheet" href="{{ asset('assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css') }}">
 @endsection
-@include('administrator.equipment.modalForm')
 @section('content')
+@include('administrator.equipment.modalForm')
 <section class="section">
     <h2 class="section-title">Equipment Record</h2>
 
@@ -28,7 +28,6 @@
                                 <th>EQUIPMENT NAME</th>
                                 <th>QUANTITY</th>
                                 <th>DESCRIPTION</th>
-                                <th>PRICE</th>
                                 <th>CREATED AT</th>
                                 <th>ADDED BY</th>
                                 <th>ACTION</th>
@@ -71,12 +70,6 @@
                 { data:"name" },
                 { data:"quantity" },
                 { data:"description" },
-                { 
-                    data:null,
-                    render:function(data){
-                        return `&#8369; `+data.price+ ` .00`
-                    }
-                },
                 { data:"created_at" },
                 { data:"added_by" },
                 {
@@ -123,7 +116,6 @@
                 $('#equipmentForm input[name="id"]').val(data.id)
                 $('input[name="name"]').val(data.name)
                 $('input[name="quantity"]').val(data.quantity)
-                $('input[name="price"]').val(data.price)
                 $('textarea[name="description"]').val(data.description)
                 $("#equipmentModal").modal("show")
             }) .fail(function (jqxHR, textStatus, errorThrown) {

@@ -6,8 +6,8 @@
         <link rel="stylesheet" href="{{ asset('assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
         <link rel="stylesheet" href="{{ asset('assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css') }}">
 @endsection
-@include('administrator.medicine.modalForm')
 @section('content')
+@include('administrator.medicine.modalForm')
 <section class="section">
     <h2 class="section-title">Prescrition and Inventory</h2>
     <p>Patient <i class="fas fa-angle-double-right"></i> Medical Record <i class="fas fa-angle-double-right"></i> Prescription &Inventory</p>

@@ -24,16 +24,10 @@ class RedirectIfAuthenticated
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
                 $userType = Auth::user()->user_type;
-                switch ($userType) {
-                    case 'administrator':
-                            return redirect()->route('administrator.dashboard');
-                        break;
-                    case 'nurse':
-                            return redirect()->route('nurse.dashboard');
-                        break;
-                    default:
-                             return redirect()->route('auth.form'); 
-                        break;
+                if ($userType) {
+                    return redirect()->route('authuser.dashboard');
+                } else {
+                    return redirect()->route('auth.form'); 
                 }
             }
         }

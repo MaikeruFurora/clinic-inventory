@@ -26,15 +26,12 @@
                             <label>Quantity</label>
                             <input id="" class="form-control" type="number" name="quantity">
                         </div>
-                        <div class="form-group">
-                            <label>Price</label>
-                            <input id="" class="form-control" type="number" name="price">
-                        </div>
+                       
                    </div>
                    <div class="col-lg-6 col-md-6 col-sm-12">
                         <div class="form-group">
                             <label for="my-textarea">Description</label>
-                            <textarea id="my-textarea" class="form-control" name="description" data-height="230"></textarea>
+                            <textarea id="my-textarea" class="form-control" name="description" data-height="150"></textarea>
                         </div>
                    </div>
                </div>

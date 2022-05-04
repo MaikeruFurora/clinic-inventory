@@ -2,53 +2,62 @@
  <div class="main-sidebar">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="{{ route('administrator.dashboard') }}">INVENTORY</a>
+            <a href="{{ route('authuser.dashboard') }}">INVENTORY</a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
-            <a href="{{ route('administrator.dashboard') }}">IN</a>
+            <a href="{{ route('authuser.dashboard') }}">IN</a>
         </div>
         @php
         $list = [
             'Main' => array(
                 'Dashboard' => array(
-                    'href' => 'administrator.dashboard',
+                    'href' =>  'authuser.dashboard',
                     'icon' => 'fas fa-fire',
                     'name' => 'dashboard'
                 )
             ),
             'Management' =>array(
                 'Patient'=>array(
-                    "href" => 'administrator.patient',
+                    "href" =>  'authuser.patient',
                     "icon" => 'fas fa-user-injured',
                     'name' => 'patient'
                 ),
 
                 'Users'=>array(
-                    "href" => 'administrator.user',
+                    "href" =>  'authuser.user',
                     "icon" => 'fas fa-users',
                     'name' => 'user'
                 )
             ),
             'Inventory' =>array(
                 'Medicine'=>array(
-                    "href" => 'administrator.medicine',
+                    "href" =>  'authuser.medicine',
                     "icon" => 'fas fa-pills',
                     'name' => 'medicine'
                 ),
 
                 'Equipment'=>array(
-                    "href" => 'administrator.equipment',
+                    "href" =>  'authuser.equipment',
                     "icon" => 'fab fa-accessible-icon',
                     'name' => 'equipment'
                 ),
                 'Expenses'=>array(
-                    "href" => 'administrator.expenses',
+                    "href" =>  'authuser.expenses',
                     "icon" => 'fas fa-hand-holding-usd',
                     'name' => 'expenses'
                 )
             )
-        ]
+    ];
+
+        if (auth()->user()->user_type==="nurse") {
+            unset($list['Management']['Users']);
+            $list['Management']['Profile']['href']='authuser.profile';
+            $list['Management']['Profile']['icon']='far fa-user-circle';
+            $list['Management']['Profile']['name']='profile';
+        }
+        
         @endphp
+        
         <ul class="sidebar-menu">
             @foreach ($list as $key => $item1)
             <li class="menu-header text-primary">{{ $key }}</li>

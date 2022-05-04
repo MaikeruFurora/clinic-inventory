@@ -17,11 +17,10 @@ class EquipmentController extends Controller
             0 =>'id', 
             1 =>'name', 
             2 =>'quantity',
-            3 =>'price',
-            4 =>'description',
-            5 =>'created_at',
-            6 =>'added_by',
-            7 =>'id',
+            3 =>'description',
+            4 =>'created_at',
+            5 =>'added_by',
+            6 =>'id',
         );
         
         $totalData = Equipment::count();
@@ -35,7 +34,7 @@ class EquipmentController extends Controller
 
         if(empty($request->input('search.value')))
         {          
-        $posts = Equipment::select('equipment.id','name','quantity','price','description','equipment.created_at',
+        $posts = Equipment::select('equipment.id','name','quantity','description','equipment.created_at',
                             DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
                             ->join('users','equipment.user_id','users.id')->latest()
                             ->offset($start)
@@ -47,7 +46,7 @@ class EquipmentController extends Controller
         else {
         $search = $request->input('search.value'); 
 
-        $posts =  Equipment::select('equipment.id','name','quantity','price','description','equipment.created_at',
+        $posts =  Equipment::select('equipment.id','name','quantity','description','equipment.created_at',
                             DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
                             ->join('users','equipment.user_id','users.id')->latest()
                             ->orWhere('name', 'LIKE',"%{$search}%")
@@ -58,7 +57,7 @@ class EquipmentController extends Controller
                             ->latest()
                             ->get();
 
-        $totalFiltered = Equipment::select('name','quantity','price','description','equipment.created_at',
+        $totalFiltered = Equipment::select('name','quantity','description','equipment.created_at',
                     DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
                     ->join('users','equipment.user_id','users.id')->latest()
                     ->orWhere('name', 'LIKE',"%{$search}%")
@@ -74,7 +73,6 @@ class EquipmentController extends Controller
             $nestedData['name'] = $post->name;
             $nestedData['quantity'] = $post->quantity;
             $nestedData['description'] = $post->description;
-            $nestedData['price'] = $post->price;
             $nestedData['created_at'] = $post->created_at->format("F j, Y");
             $nestedData['added_by'] = $post->added_by;
             $nestedData['id'] = $post->id;
@@ -102,8 +100,7 @@ class EquipmentController extends Controller
         return Equipment::updateorcreate(['id'=>$request->id],[
             'user_id'=>auth()->user()->id,
             'name'=>$request->name, 
-            'quantity'=>$request->quantity, 
-            'price'=>$request->price, 
+            'quantity'=>$request->quantity,
             'description'=>$request->description, 
         ]);
     }

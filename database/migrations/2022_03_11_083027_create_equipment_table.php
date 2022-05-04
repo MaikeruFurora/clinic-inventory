@@ -21,8 +21,7 @@ class CreateEquipmentTable extends Migration
 
             $table->string('name');
             $table->string('quantity');
-            $table->string('price');
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

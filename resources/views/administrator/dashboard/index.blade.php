@@ -2,188 +2,105 @@
 @section('title','Dashboard')
 @section('moreCss')
   <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/modules/datatables/datatables.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css') }}">
 @endsection
 @section('content')
 <section class="section">
     <h2 class="section-title">Dashboard</h2>
 
     <div class="row">
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-          <div class="card card-statistic-1">
-            <div class="card-icon bg-primary">
-                <i style="font-size: 30px" class="fas fa-user-shield"></i>
-            </div>
-            <div class="card-wrap">
-              <div class="card-header">
-                <h4>Total Admin</h4>
-              </div>
-              <div class="card-body">
-                {{ number_format($countAdmin->total) }}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-          <div class="card card-statistic-1">
-            <div class="card-icon bg-danger">
-                <i style="font-size: 30px" class="fas fa-user-nurse"></i>
-            </div>
-            <div class="card-wrap">
-              <div class="card-header">
-                <h4>Total Nurse</h4>
-              </div>
-              <div class="card-body">
-                {{ number_format($countNurse->total) }}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-          <div class="card card-statistic-1">
-            <div class="card-icon bg-warning">
-                <i style="font-size: 30px" class="fas fa-pills"></i>
-            </div>
-            <div class="card-wrap">
-              <div class="card-header">
-                <h4>Medicine</h4>
-              </div>
-              <div class="card-body">
-                {{ number_format($countMedicine->total) }}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-          <div class="card card-statistic-1">
-            <div class="card-icon bg-success">
-                <i style="font-size: 30px" class="fas fa-user-injured"></i>
-            </div>
-            <div class="card-wrap">
-              <div class="card-header">
-                <h4>Patient</h4>
-              </div>
-              <div class="card-body">
-                {{ number_format($countPatient->total) }}
-              </div>
-            </div>
-          </div>
-        </div>
-    </div>
-    <div class="row">
-      <div class="col-lg-4 col-md-4 col-sm 12">
-        <div class="card ">
-          <div class="card-header">
-            <h4>Expenses</h4>
-            <div class="card-header-action">
-              <a href="{{ route('administrator.expenses') }}" class="btn btn-primary">View All</a>
-            </div>
-          </div>
-          <div class="card-body">
-                <div class="row">
-                  <div class="col-sm-6 col-6 mb-md-0 mb-4 text-center">
-                    <div class="mt-2 font-weight-bold text-nowrap"><h4>{{ date("Y") }}</h4></div>
-                    <div class="text-small text-muted"></span>Current Year</div>
+       <div class="col-lg-4 col-md-12 col-sm-12">
+          <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <div class="card card-statistic-1">
+                <div class="card-icon bg-primary">
+                    <i style="font-size: 30px" class="fas fa-user-shield"></i>
+                </div>
+                <div class="card-wrap">
+                  <div class="card-header">
+                    <h4>Admin</h4>
                   </div>
-                  <div class="col-sm-6 col-6 text-center">
-                    <div class="mt-2 font-weight-bold text-nowrap"><h4 class="expense_in_a_year"></h4></div>
-                    <div class="text-small text-muted">Yearly Amount</div>
+                  <div class="card-body" style="font-size: 15px">
+                    {{ number_format($countAdmin->total) }}
                   </div>
                 </div>
-             
-              <canvas id="pie" height="10"></canvas>
-          </div>
-      </div>
-      </div>
-      <div class="col-lg-8 col-md-8 col-sm 12">
-          <div class="card">
-            <div class="card-header">
-              <h4>Patient Record Year of {{ date("Y") }}</h4>
-              <div class="card-header-action">
-                <a href="{{ route('administrator.patient') }}" class="btn btn-primary">View All</a>
               </div>
             </div>
-            <div class="card-body">
-              <canvas id="bar" height="150"></canvas>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <div class="card card-statistic-1">
+                <div class="card-icon bg-danger">
+                    <i style="font-size: 30px" class="fas fa-user-nurse"></i>
+                </div>
+                <div class="card-wrap">
+                  <div class="card-header">
+                    <h4>Nurse</h4>
+                  </div>
+                  <div class="card-body" style="font-size: 15px">
+                    {{ number_format($countNurse->total) }}
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-      </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-4 col-md-4 col-sm-12">
-            <div class="card">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <div class="card card-statistic-1">
+                <div class="card-icon bg-warning">
+                    <i style="font-size: 30px" class="fas fa-pills"></i>
+                </div>
+                <div class="card-wrap">
+                  <div class="card-header">
+                    <h4>Medicine</h4>
+                  </div>
+                  <div class="card-body" style="font-size: 15px">
+                    {{ number_format($countMedicine->total) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <div class="card card-statistic-1">
+                <div class="card-icon bg-success">
+                    <i style="font-size: 30px" class="fas fa-user-injured"></i>
+                </div>
+                <div class="card-wrap">
+                  <div class="card-header">
+                    <h4>Patient</h4>
+                  </div>
+                  <div class="card-body" style="font-size: 15px">
+                    {{ number_format($countPatient->total) }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              {{-- expenses --}}
+              <div class="card ">
                 <div class="card-header">
-                    <h4>Latest Added Patient</h4>
-                    <div class="card-header-action">
-                      <a href="{{ route('administrator.patient') }}" class="btn btn-primary">View All</a>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                  <div class="table-responsive">
-                    <table class="table table-striped mb-0">
-                      <thead>
-                        <tr>
-                          <th>Patient Name</th>
-                          <th>Address</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                       @foreach ($latestPatient as $item)
-                            <tr>
-                          <td>
-                            {{ $item->firt_name. ' '. $item->last_name }}
-                          </td>
-                          <td>
-                            {{ $item->address }}
-                          </td>
-                        </tr>
-                       @endforeach
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                  <h4>Latest Added Medicine</h4>
+                  <h4>Expenses</h4>
                   <div class="card-header-action">
-                    <a href="{{ route('administrator.medicine') }}" class="btn btn-primary">View All</a>
+                    <a href="{{ route('authuser.expenses') }}" class="btn btn-primary">View All</a>
                   </div>
                 </div>
-                <div class="card-body p-0">
-                  <div class="table-responsive">
-                    <table class="table table-striped mb-0">
-                      <thead>
-                        <tr>
-                          <th>Medicine</th>
-                          <th>Sell Price</th>
-                          <th>Expiration Date</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                       @foreach ($latestMedicine as $item)
-                            <tr>
-                          <td>
-                            {{ $item->medicine_name }}
-                          </td>
-                          <td>
-                            &#8369;{{ $item->sell_price }}.00
-                          </td>
-                          <td>
-                            {{ date("F d, Y",strtotime($item->expiration_date)) }}
-                          </td>
-                        </tr>
-                       @endforeach
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-12">
-            <div class="card">
                 <div class="card-body">
+                      <div class="row">
+                        <div class="col-sm-6 col-6 mb-md-0 mb-4 text-center">
+                          <div class="mt-2 font-weight-bold text-nowrap"><h5>{{ date("Y") }}</h5></div>
+                          <div class="text-small text-muted"></span>Current Year</div>
+                        </div>
+                        <div class="col-sm-6 col-6 text-center">
+                          <div class="mt-2 font-weight-bold text-nowrap"><h5 class="expense_in_a_year"></h5></div>
+                          <div class="text-small text-muted">Yearly Amount</div>
+                        </div>
+                      </div>
+                   
+                    <canvas id="pie" height="10"></canvas>
+                </div>
+              </div>
+             
+              {{-- calendar --}}
+              <div class="card p-0">
+                <div class="card-body pb-0">
                     <div class="container-calendar">
                         <h4 id="monthAndYear"></h4>
                         <div class="button-container-calendar">
@@ -217,8 +134,88 @@
                     </div>
                 </div>
             </div>
+            </div>
+          </div>
+       </div>
+       <div class="col-lg-8 col-md-12 col-sm-12">
+        <div class="card">
+          <div class="card-header">
+            <h4>Patient Record Year of {{ date("Y") }}</h4>
+            <div class="card-header-action">
+              <a href="{{ route('authuser.patient') }}" class="btn btn-primary">View All</a>
+            </div>
+          </div>
+          <div class="card-body">
+            <canvas id="bar" height="110"></canvas>
+          </div>
         </div>
+        <div class="card">
+          <div class="card-header">
+            <h4>Expired Medicine</h4>
+            <div class="card-header-action">
+                    <a href="{{ route('authuser.medicine') }}" class="btn btn-primary">View All</a>
+                  </div>
+          </div>
+          <div class="card-body">
+              <table id="datatable" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Medicine Name</th>
+                    <th>Stock</th>
+                    <th>Quantity</th>
+                    <th>Expiration Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($expired as $key => $item)
+                      <tr>
+                        <td>{{ ++$key }}</td>
+                        <td>{{ $item->medicine_name }}</td>
+                        <td>{{ $item->unit_type }}</td>
+                        <td>{{ $item->unit_qty }}</td>
+                        <td>{{ $item->expiration_date }}</td>
+                      </tr>
+                  @endforeach
+                </tbody>
+              </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <h4>Running out of stock Medicine</h4>
+            <div class="card-header-action">
+                    <a href="{{ route('authuser.medicine') }}" class="btn btn-primary">View All</a>
+                  </div>
+          </div>
+          <div class="card-body">
+              <table id="RunningOutOfStock" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Medicine Name</th>
+                    <th>Stock</th>
+                    <th>Quantity</th>
+                    <th>Expiration Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @foreach ($RunningOutOfStock as $key => $item)
+                      <tr>
+                        <td>{{ ++$key }}</td>
+                        <td>{{ $item->medicine_name }}</td>
+                        <td>{{ $item->unit_type }}</td>
+                        <td>{{ $item->unit_qty }}</td>
+                        <td>{{ $item->expiration_date }}</td>
+                      </tr>
+                  @endforeach
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </div>
     </div>
+   
     
 </section>
 @endsection
@@ -226,7 +223,12 @@
 @section('moreJs')
     <script src="{{ asset('js/dashboard.js') }}"></script>
     <script src="{{ asset('assets/modules/chartjs/chart.min.js') }}"></script>
+    <script src="{{ asset('assets/modules/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('assets/modules/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js') }}"></script>
     <script>
+
+      $("#datatable").DataTable()
+      $("#RunningOutOfStock").DataTable()
       let pieGraph = JSON.parse('<?=$pieGraph?>')
       let myIndex = pieGraph.map((val,i)=>(--val.month))
       let myMonth =month.filter((val,i)=>i==myIndex[i]?val:'')

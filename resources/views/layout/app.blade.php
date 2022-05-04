@@ -43,7 +43,7 @@
     <script src="{{ asset('js/scripts.js') }}"></script>
     <script src="{{ asset('js/global.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
-
+    
     @yield('moreJs')
     </body>
 

@@ -76,8 +76,9 @@ let isNull=(value)=>{
     return value!=null?value:'';
 }
  
-let isNullPrice=(value)=>{
-    return value!=null?'₱ '+ value.toLocaleString() +'.00':'₱ 0.00';
+let isNullPrice = (value) => {
+    let dollarUSLocale = Intl.NumberFormat('en-US');
+    return value!=null?'₱ '+ (dollarUSLocale.format(value)) +'.00':'₱ 0.00';
  }
 
 // $(".modalLogout").on('click',function(event){

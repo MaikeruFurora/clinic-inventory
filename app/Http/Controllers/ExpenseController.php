@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use PDF;
 
 class ExpenseController extends Controller{
+
     public function expenses(){
         $years = Expense::select(DB::raw('YEAR(created_at) as year'))->orderBy('year','DESC')->groupBy('year')->get();
         return view('administrator/expenses/index',compact('years'));
@@ -54,23 +55,101 @@ class ExpenseController extends Controller{
      * filter method using year and month
      * 
      */
-    public function expensesList($year,$month){
-        if ($month=='null') {
-                   return response()->json([
-                        "data"=> Expense::select('expenses.id','amount','description','expenses.created_at',DB::raw('DATE(expenses.created_at) as pdate'),DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
-                        ->join('users','expenses.user_id','users.id')->latest()
-                        ->where(DB::raw('YEAR(expenses.created_at)'),$year)
-                        ->get()
-                    ]);
-        } else {
-                   return response()->json([
-                        "data"=> Expense::select('expenses.id','amount','description','expenses.created_at',DB::raw('DATE(expenses.created_at) as pdate'),DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
-                        ->join('users','expenses.user_id','users.id')->latest()
-                        ->where(DB::raw('YEAR(expenses.created_at)'),$year)
-                        ->where(DB::raw('MONTH(expenses.created_at)'),$month)
-                        ->get()
-                    ]);
+    public function expensesList($year,$month,Request $request){
+        $columns = array( 
+            0 =>'description', 
+            1 =>'amount',
+            2 =>'fullname',
+            3 =>'pdate',
+            4 =>'id',
+        );
+        
+         $totalData = Expense::where(DB::raw('YEAR(expenses.created_at)'),$year)->where(DB::raw('MONTH(expenses.created_at)'),$month)->count();
+
+        $totalFiltered = $totalData; 
+
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if(empty($request->input('search.value')))
+        {          
+        $posts = Expense::select('expenses.id','amount','description','expenses.created_at',DB::raw('DATE(expenses.created_at) as pdate'),DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
+                            ->where(DB::raw('YEAR(expenses.created_at)'),$year)
+                            ->where(DB::raw('MONTH(expenses.created_at)'),$month)
+                            ->join('users','expenses.user_id','users.id')
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->latest()
+                            ->get();
         }
+        else {
+        $search = $request->input('search.value'); 
+
+        $posts =  Expense::select('expenses.id','amount','description','expenses.created_at',DB::raw('DATE(expenses.created_at) as pdate'),DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
+                            ->join('users','expenses.user_id','users.id')
+                            ->where(DB::raw('YEAR(expenses.created_at)'),$year)
+                            ->where(DB::raw('MONTH(expenses.created_at)'),$month)
+                            ->orWhere('description', 'LIKE',"%{$search}%")
+                            ->orWhere('fullname', 'LIKE',"%{$search}%")
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->latest()
+                            ->get();
+
+        $totalFiltered = Expense::select('expenses.id','amount','description','expenses.created_at',DB::raw('DATE(expenses.created_at) as pdate'),DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
+                    ->join('users','medicines.user_id','users.id')
+                    ->where(DB::raw('YEAR(expenses.created_at)'),$year)
+                    ->where(DB::raw('MONTH(expenses.created_at)'),$month)
+                    ->orWhere('description', 'LIKE',"%{$search}%")
+                    ->orWhere('fullname', 'LIKE',"%{$search}%")
+                    ->count();
+        }
+
+        $data = array();
+        if(!empty($posts)) {
+            foreach ($posts as $post) {
+
+            $nestedData['description'] = $post->description;
+            $nestedData['amount'] = $post->amount;
+            $nestedData['fullname'] = $post->fullname;
+            $nestedData['pdate'] = $post->pdate;
+            $nestedData['id'] = $post->id;
+            // $nestedData['created_at'] = date('j M Y h:i a',strtotime($post->created_at));
+            // $nestedData['options'] = "&emsp;<a href='{$show}' title='SHOW' ><span class='glyphicon glyphicon-list'></span></a>
+                                    // &emsp;<a href='{$edit}' title='EDIT' ><span class='glyphicon glyphicon-edit'></span></a>";
+            $data[] = $nestedData;
+
+            }
+        }
+
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),  
+            "recordsTotal"    => intval($totalData),  
+            "recordsFiltered" => intval($totalFiltered), 
+            "data"            => $data   
+            );
+
+        echo json_encode($json_data); 
+        // if ($month=='null') {
+        //            return response()->json([
+        //                 "data"=> Expense::select('expenses.id','amount','description','expenses.created_at',DB::raw('DATE(expenses.created_at) as pdate'),DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
+        //                 ->join('users','expenses.user_id','users.id')->latest()
+        //                 ->where(DB::raw('YEAR(expenses.created_at)'),$year)
+        //                 ->get()
+        //             ]);
+        // } else {
+        //            return response()->json([
+        //                 "data"=> Expense::select('expenses.id','amount','description','expenses.created_at',DB::raw('DATE(expenses.created_at) as pdate'),DB::raw("CONCAT(users.first_name,' ',users.last_name) as fullname"))
+        //                 ->join('users','expenses.user_id','users.id')->latest()
+        //                 ->where(DB::raw('YEAR(expenses.created_at)'),$year)
+        //                 ->where(DB::raw('MONTH(expenses.created_at)'),$month)
+        //                 ->get()
+        //             ]);
+        // }
         
 
     }

@@ -1,13 +1,13 @@
 @extends('layout.app')
 @section('title','Medical Record')
-@include('administrator.patient.modalForm')
 @section('moreCss')
-        <!-- DataTables -->
-        <link rel="stylesheet" href="{{ asset('assets/modules/datatables/datatables.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css') }}">
+<!-- DataTables -->
+<link rel="stylesheet" href="{{ asset('assets/modules/datatables/datatables.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css') }}">
+<link rel="stylesheet" href="{{ asset('assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css') }}">
 @endsection
 @section('content')
+@include('administrator.patient.modalForm')
 <section class="section">
     <h2 class="section-title">Medical Record</h2>
     <p>Patient <i class="fas fa-angle-double-right"></i> Medical Record </p>
@@ -19,7 +19,7 @@
                     <div class="card-header">
                         <h4 class="mt-0 header-title">Medical Record of <u class="text-dark">{{ $patient->first_name.' '.$patient->last_name }}</u></h4>
                         <div class="card-header-action">
-                            <a href="{{ route('administrator.patient') }}" class="btn btn-dark"><i class="fas fa-angle-double-left"></i> Back</a>
+                            <a href="{{ route('authuser.patient') }}" class="btn btn-dark"><i class="fas fa-angle-double-left"></i> Back</a>
                             <button class="btn btn-success createCMR"><i class="fas fa-file-medical-alt"></i> Create Medical Record</button>
                         </div>
                     </div>

@@ -4,30 +4,45 @@ namespace App\Http\Controllers;
 
 use App\Models\Medicine;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class MedicineController extends Controller
 {
+
+    private $dateNow;
+    private $totalExpired;
+    private $totalRunningOutOfStock;
+
+    public function __construct()
+    {
+        $this->dateNow=Carbon::now();
+        $this->totalExpired=Medicine::whereDate('expiration_date', '>', $this->dateNow->toDateString())->count();
+        $this->totalRunningOutOfStock=Medicine::where('unit_qty','<',20)->count();
+    }
+
     public function medicine(){
-        return view('administrator/medicine/index');
+        return view('administrator/medicine/index',[
+            'te'=>$this->totalExpired,
+            'tr'=>$this->totalRunningOutOfStock,
+        ]);
     }
     
     public function medicineList(Request $request){
         $columns = array( 
             0 =>'barcode', 
             1 =>'medicine_name',
-            2 =>'medicine_pharma',
-            3 =>'medicine_cabinet',
+            2 =>'stock',
             // 4 =>'unit_type',
-            4 =>'unit_qty',
-            5 =>'buy_price',
-            6 =>'sell_price',
-            7 =>'expiration_date',
-            8 =>'added_by',
-            9 =>'id',
+            3 =>'unit_qty',
+            4 =>'buy_price',
+            5 =>'sell_price',
+            6 =>'expiration_date',
+            7 =>'added_by',
+            8 =>'id',
         );
         
-        $totalData = Medicine::count();
+        $totalData = Medicine::whereDate('expiration_date', '<', $this->dateNow->toDateString())->count();
 
         $totalFiltered = $totalData; 
 
@@ -38,8 +53,9 @@ class MedicineController extends Controller
 
         if(empty($request->input('search.value')))
         {          
-        $posts = Medicine::select('medicines.id','medicine_name','medicine_pharma','medicine_cabinet','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
+        $posts = Medicine::select('medicines.id','medicine_name','stock','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
                             DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
+                            ->whereDate('expiration_date', '<', $this->dateNow->toDateString())
                             ->join('users','medicines.user_id','users.id')->latest()
                             ->offset($start)
                             ->limit($limit)
@@ -50,24 +66,26 @@ class MedicineController extends Controller
         else {
         $search = $request->input('search.value'); 
 
-        $posts =  Medicine::select('medicines.id','medicine_name','medicine_pharma','medicine_cabinet','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
+        $posts =  Medicine::select('medicines.id','medicine_name','stock','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
                             DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
                             ->join('users','medicines.user_id','users.id')->latest()
+                            ->whereDate('expiration_date', '<', $this->dateNow->toDateString())
                             ->orWhere('medicine_name', 'LIKE',"%{$search}%")
-                            ->orWhere('medicine_pharma', 'LIKE',"%{$search}%")
-                            ->orWhere('medicine_cabinet', 'LIKE',"%{$search}%")
+                            ->orWhere('stock', 'LIKE',"%{$search}%")
+                            ->orWhere('barcode', 'LIKE',"%{$search}%")
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->latest()
                             ->get();
 
-        $totalFiltered = Medicine::select('medicines.id','medicine_name','medicine_pharma','medicine_cabinet','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
+        $totalFiltered = Medicine::select('medicines.id','medicine_name','stock','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
                     DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
                     ->join('users','medicines.user_id','users.id')->latest()
+                    ->whereDate('expiration_date', '<', $this->dateNow->toDateString())
                     ->orWhere('medicine_name', 'LIKE',"%{$search}%")
-                    ->orWhere('medicine_pharma', 'LIKE',"%{$search}%")
-                    ->orWhere('medicine_cabinet', 'LIKE',"%{$search}%")
+                    ->orWhere('stock', 'LIKE',"%{$search}%")
+                    ->orWhere('barcode', 'LIKE',"%{$search}%")
                     ->count();
         }
 
@@ -77,8 +95,7 @@ class MedicineController extends Controller
 
             $nestedData['barcode'] = $post->barcode;
             $nestedData['medicine_name'] = $post->medicine_name;
-            $nestedData['medicine_pharma'] = $post->medicine_pharma;
-            $nestedData['medicine_cabinet'] = $post->medicine_cabinet;
+            $nestedData['stock'] = $post->stock;
             // $nestedData['unit_type'] = $post->unit_type;
             $nestedData['unit_qty'] = $post->unit_qty;
             $nestedData['buy_price'] = $post->buy_price;
@@ -109,8 +126,7 @@ class MedicineController extends Controller
         return Medicine::updateorcreate(['id'=>$request->id],[
             'user_id'=>auth()->user()->id,
             'medicine_name'=>$request->medicine_name,
-            'medicine_pharma'=>$request->medicine_pharma,
-            'medicine_cabinet'=>$request->medicine_cabinet,
+            'stock'=>$request->stock,
             'unit_qty'=>$request->unit_qty,
             // 'unit_type'=>$request->unit_type,
             'buy_price'=>$request->buy_price,
@@ -142,5 +158,220 @@ class MedicineController extends Controller
         // query the database and return a boolean
         // for instance, it might look like this in Laravel
         return Medicine::whereBarcode($barcode)->exists();
+    }
+
+
+    //expired
+    public function expired(){
+        return view('administrator/medicine/expired',[
+            'te'=>$this->totalExpired,
+            'tr'=>$this->totalRunningOutOfStock,
+        ]);
+    }
+
+    public function expiredPrint(){
+        $type='Expired';
+        $data =  Medicine::whereDate('expiration_date', '>', $this->dateNow->toDateString())->get();
+        return view('administrator/medicine/print',compact('data','type'));
+    }
+
+
+    public function expiredList(Request $request){
+        $columns = array( 
+            0 =>'barcode', 
+            1 =>'medicine_name',
+            2 =>'stock',
+            // 4 =>'unit_type',
+            3 =>'unit_qty',
+            4 =>'buy_price',
+            5 =>'sell_price',
+            6 =>'expiration_date',
+            7 =>'added_by',
+        );
+        
+        $totalData = Medicine::whereDate('expiration_date', '>', $this->dateNow->toDateString())->count();
+
+        $totalFiltered = $totalData; 
+
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if(empty($request->input('search.value')))
+        {          
+        $posts = Medicine::select('medicines.id','medicine_name','stock','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
+                            DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
+                            ->whereDate('expiration_date', '>', $this->dateNow->toDateString())
+                            ->join('users','medicines.user_id','users.id')->latest()
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->latest()
+                            ->get();
+        }
+        else {
+        $search = $request->input('search.value'); 
+
+        $posts =  Medicine::select('medicines.id','medicine_name','stock','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
+                            DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
+                            ->join('users','medicines.user_id','users.id')->latest()
+                            ->whereDate('expiration_date', '>', $this->dateNow->toDateString())
+                            ->orWhere('medicine_name', 'LIKE',"%{$search}%")
+                            ->orWhere('stock', 'LIKE',"%{$search}%")
+                            ->orWhere('barcode', 'LIKE',"%{$search}%")
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->latest()
+                            ->get();
+
+        $totalFiltered = Medicine::select('medicines.id','medicine_name','stock','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
+                    DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
+                    ->join('users','medicines.user_id','users.id')->latest()
+                    ->whereDate('expiration_date', '>', $this->dateNow->toDateString())
+                    ->orWhere('medicine_name', 'LIKE',"%{$search}%")
+                    ->orWhere('stock', 'LIKE',"%{$search}%")
+                    ->orWhere('barcode', 'LIKE',"%{$search}%")
+                    ->count();
+        }
+
+        $data = array();
+        if(!empty($posts)) {
+            foreach ($posts as $post) {
+
+            $nestedData['barcode'] = $post->barcode;
+            $nestedData['medicine_name'] = $post->medicine_name;
+            $nestedData['stock'] = $post->stock;
+            // $nestedData['unit_type'] = $post->unit_type;
+            $nestedData['unit_qty'] = $post->unit_qty;
+            $nestedData['buy_price'] = $post->buy_price;
+            $nestedData['sell_price'] = $post->sell_price;
+            // $nestedData['barcode'] = $post->type;
+            $nestedData['expiration_date'] = $post->expiration_date;
+            $nestedData['added_by'] = $post->added_by;
+            // $nestedData['created_at'] = date('j M Y h:i a',strtotime($post->created_at));
+            // $nestedData['options'] = "&emsp;<a href='{$show}' title='SHOW' ><span class='glyphicon glyphicon-list'></span></a>
+                                    // &emsp;<a href='{$edit}' title='EDIT' ><span class='glyphicon glyphicon-edit'></span></a>";
+            $data[] = $nestedData;
+
+            }
+        }
+
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),  
+            "recordsTotal"    => intval($totalData),  
+            "recordsFiltered" => intval($totalFiltered), 
+            "data"            => $data   
+            );
+
+        echo json_encode($json_data); 
+    }
+
+    public function runningOutOfStock(){
+        return view('administrator/medicine/runningOutOfStock',[
+            'te'=>$this->totalExpired,
+            'tr'=>$this->totalRunningOutOfStock,
+        ]);
+    }
+
+    public function runningOutOfStockPrint(){
+        $type = 'Running out of stock';
+        $data = Medicine::where('unit_qty','<',20)->get();
+        return view('administrator/medicine/print',compact('data','type'));
+    }
+
+    public function runningOutOfStockList(Request $request){
+        $columns = array( 
+            0 =>'barcode', 
+            1 =>'medicine_name',
+            2 =>'stock',
+            // 4 =>'unit_type',
+            3 =>'unit_qty',
+            4 =>'buy_price',
+            5 =>'sell_price',
+            6 =>'expiration_date',
+            7 =>'added_by',
+            8 =>'id',
+        );
+        
+        $totalData = Medicine::where('unit_qty','<',11)->count();
+
+        $totalFiltered = $totalData; 
+
+        $limit = $request->input('length');
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
+
+        if(empty($request->input('search.value')))
+        {          
+        $posts = Medicine::select('medicines.id','medicine_name','stock','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
+                            DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
+                            ->where('unit_qty','<',20)
+                            ->join('users','medicines.user_id','users.id')->latest()
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->latest()
+                            ->get();
+        }
+        else {
+        $search = $request->input('search.value'); 
+
+        $posts =  Medicine::select('medicines.id','medicine_name','stock','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
+                            DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
+                            ->join('users','medicines.user_id','users.id')->latest()
+                            ->where('unit_qty','<',20)
+                            ->orWhere('medicine_name', 'LIKE',"%{$search}%")
+                            ->orWhere('stock', 'LIKE',"%{$search}%")
+                            ->orWhere('barcode', 'LIKE',"%{$search}%")
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->latest()
+                            ->get();
+
+        $totalFiltered = Medicine::select('medicines.id','medicine_name','stock','unit_qty','buy_price','sell_price','barcode','expiration_date','medicines.created_at',
+                    DB::raw("CONCAT(users.first_name,' ',users.last_name) as added_by"))
+                    ->join('users','medicines.user_id','users.id')->latest()
+                    ->where('unit_qty','<',20)
+                    ->orWhere('medicine_name', 'LIKE',"%{$search}%")
+                    ->orWhere('stock', 'LIKE',"%{$search}%")
+                    ->orWhere('barcode', 'LIKE',"%{$search}%")
+                    ->count();
+        }
+
+        $data = array();
+        if(!empty($posts)) {
+            foreach ($posts as $post) {
+
+            $nestedData['barcode'] = $post->barcode;
+            $nestedData['medicine_name'] = $post->medicine_name;
+            $nestedData['stock'] = $post->stock;
+            // $nestedData['unit_type'] = $post->unit_type;
+            $nestedData['unit_qty'] = $post->unit_qty;
+            $nestedData['buy_price'] = $post->buy_price;
+            $nestedData['sell_price'] = $post->sell_price;
+            // $nestedData['barcode'] = $post->type;
+            $nestedData['expiration_date'] = $post->expiration_date;
+            $nestedData['added_by'] = $post->added_by;
+            $nestedData['id'] = $post->id;
+            // $nestedData['created_at'] = date('j M Y h:i a',strtotime($post->created_at));
+            // $nestedData['options'] = "&emsp;<a href='{$show}' title='SHOW' ><span class='glyphicon glyphicon-list'></span></a>
+                                    // &emsp;<a href='{$edit}' title='EDIT' ><span class='glyphicon glyphicon-edit'></span></a>";
+            $data[] = $nestedData;
+
+            }
+        }
+
+        $json_data = array(
+            "draw"            => intval($request->input('draw')),  
+            "recordsTotal"    => intval($totalData),  
+            "recordsFiltered" => intval($totalFiltered), 
+            "data"            => $data   
+            );
+
+        echo json_encode($json_data);
     }
 }

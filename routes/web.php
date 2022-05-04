@@ -33,8 +33,18 @@ Route::middleware(['guest:web', 'preventBackHistory'])->name('auth.')->group(fun
 //logout
 Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
 
-Route::middleware(['auth:web','preventBackHistory','administrator'])->name('administrator.')->prefix('administrator/')->group(function(){
+Route::middleware(['auth:web','preventBackHistory','authuser'])->name('authuser.')->prefix('authuser/')->group(function(){
     Route::get('dashboard',[AdministratorController::class,'dashboard'])->name('dashboard');
+    
+    /**
+     * 
+     * for nurse profile
+     * 
+     */
+    
+    Route::get('profile',[AdministratorController::class,'profile'])->name('profile');
+
+
 
     //patient controller function and design
     Route::get('patient',[PatientController::class,'patient'])->name('patient');
@@ -59,12 +69,28 @@ Route::middleware(['auth:web','preventBackHistory','administrator'])->name('admi
      Route::post('user/store',[UserController::class,'store']);
      Route::post('user/change-password',[UserController::class,'changePassword']);
 
-    //medicine controller function and design
-    Route::get('medicine',[MedicineController::class,'medicine'])->name('medicine');
-    Route::post('medicine/list',[MedicineController::class,'medicineList']);
-    Route::get('medicine/edit/{id}',[MedicineController::class,'edit']);
-    Route::post('medicine/store',[MedicineController::class,'store']);
+     /**
+      * Medicine 
+      **/
+        //medicine controller function and design
+        Route::get('medicine',[MedicineController::class,'medicine'])->name('medicine');
+        Route::post('medicine/list',[MedicineController::class,'medicineList']);
+        Route::get('medicine/edit/{id}',[MedicineController::class,'edit']);
+        Route::post('medicine/store',[MedicineController::class,'store']);
 
+        //medicine expired function
+        Route::get('expired',[MedicineController::class,'expired'])->name('expired');
+        Route::post('expired/list',[MedicineController::class,'expiredList']);
+        Route::get('expired/print',[MedicineController::class,'expiredPrint']);
+
+        
+        //medicine running out of stock function
+        Route::get('running-out-of-stock',[MedicineController::class,'runningOutOfStock'])->name('runningOutOfStock');
+        Route::post('running-out-of-stock/list',[MedicineController::class,'runningOutOfStockList']);
+        Route::get('running-out-of-stock/print',[MedicineController::class,'runningOutOfStockPrint']);
+    /***
+     * Medicine end
+     */
     //equipment controller function and design
     Route::get('equipment',[EquipmentController::class,'equipment'])->name('equipment');
     Route::post('equipment/list',[EquipmentController::class,'equipmentList']);
@@ -74,16 +100,14 @@ Route::middleware(['auth:web','preventBackHistory','administrator'])->name('admi
     //expenses controller function and design
     Route::get('expenses',[ExpenseController::class,'expenses'])->name('expenses');
     Route::post('expenses/store',[ExpenseController::class,'store']);
-    Route::get('expenses/list/{year}/{month}',[ExpenseController::class,'expensesList']);
+    Route::post('expenses/list/{year}/{month}',[ExpenseController::class,'expensesList']);
     Route::get('expenses/edit/{expense}',[ExpenseController::class,'edit']);
     Route::get('expenses/bar-graph/{year}',[ExpenseController::class,'barGraph']);
     Route::get('expenses/generate-report/{start}/{end}/{type}',[ExpenseController::class,'generateReport']);
 
 });
 
-Route::middleware(['auth:web','preventBackHistory','nurse'])->name('nurse.')->prefix('nurse/')->group(function(){
-    Route::get('dashboard',[NurseController::class,'dashboard'])->name('dashboard');
-});
+
 
 Route::get('/clear', function () { //-> tawagin mo to url sa browser -> 127.0.0.1:8000/clear
     Artisan::call('view:clear'); //   -> Clear all compiled files
