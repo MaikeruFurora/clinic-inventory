@@ -13,14 +13,14 @@
     <div class="row">
        <div class="col-lg-4 col-md-12 col-sm-12">
           <div class="row">
-            <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="col-lg-6 col-md-12 col-sm-12">
               <div class="card card-statistic-1">
                 <div class="card-icon bg-primary">
                     <i style="font-size: 30px" class="fas fa-user-shield"></i>
                 </div>
                 <div class="card-wrap">
                   <div class="card-header">
-                    <h4>Admin</h4>
+                    <h4 style="font-size:12px">Admin</h4>
                   </div>
                   <div class="card-body" style="font-size: 15px">
                     {{ number_format($countAdmin->total) }}
@@ -28,14 +28,14 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="col-lg-6 col-md-12 col-sm-12">
               <div class="card card-statistic-1">
                 <div class="card-icon bg-danger">
                     <i style="font-size: 30px" class="fas fa-user-nurse"></i>
                 </div>
                 <div class="card-wrap">
                   <div class="card-header">
-                    <h4>Nurse</h4>
+                    <h4 style="font-size:12px">Nurse</h4>
                   </div>
                   <div class="card-body" style="font-size: 15px">
                     {{ number_format($countNurse->total) }}
@@ -43,14 +43,14 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="col-lg-6 col-md-12 col-sm-12">
               <div class="card card-statistic-1">
                 <div class="card-icon bg-warning">
                     <i style="font-size: 30px" class="fas fa-pills"></i>
                 </div>
                 <div class="card-wrap">
                   <div class="card-header">
-                    <h4>Medicine</h4>
+                    <h4 style="font-size:12px">Medicine</h4>
                   </div>
                   <div class="card-body" style="font-size: 15px">
                     {{ number_format($countMedicine->total) }}
@@ -58,17 +58,18 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="col-lg-6 col-md-12 col-sm-12">
               <div class="card card-statistic-1">
                 <div class="card-icon bg-success">
                     <i style="font-size: 30px" class="fas fa-user-injured"></i>
                 </div>
                 <div class="card-wrap">
                   <div class="card-header">
-                    <h4>Patient</h4>
+                    <h4 style="font-size:12px">Patient</h4>
                   </div>
                   <div class="card-body" style="font-size: 15px">
-                    {{ number_format($countPatient->total) }}
+                    {{ number_format($countPatient->total) }} <br>
+                    <span class="badge badge-primary p-1"  style="font-size: 9px">Year: {{ date("Y") }}</span>
                   </div>
                 </div>
               </div>

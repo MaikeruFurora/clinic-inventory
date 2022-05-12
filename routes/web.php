@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/text',[AdministratorController::class,'text']);
 
 
 // Auth route
@@ -43,6 +44,7 @@ Route::middleware(['auth:web','preventBackHistory','authuser'])->name('authuser.
      */
     
     Route::get('profile',[AdministratorController::class,'profile'])->name('profile');
+    Route::post('change/password',[AdministratorController::class,'changePassword'])->name('change.password');
 
 
 

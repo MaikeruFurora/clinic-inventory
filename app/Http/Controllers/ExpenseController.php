@@ -11,7 +11,7 @@ use PDF;
 class ExpenseController extends Controller{
 
     public function expenses(){
-        $years = Expense::select(DB::raw('YEAR(created_at) as year'))->orderBy('year','DESC')->groupBy('year')->get();
+        $years = Expense::select(DB::raw('YEAR(created_at) as year'))->orderBy('year','DESC')->groupBy('year')->limit(5)->get();
         return view('administrator/expenses/index',compact('years'));
     }
     

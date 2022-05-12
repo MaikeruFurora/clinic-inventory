@@ -135,6 +135,9 @@
                     </div>
                 </div>
                 <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Report</h4>
+                    </div>
                     <div class="card-body">
                        <a href="javascript:;" class="btn btn-primary btn-block daterange-btn icon-left btn-icon"><i class="fas fa-calendar"></i> Choose date to generate report
                        </a>

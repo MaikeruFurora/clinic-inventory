@@ -287,7 +287,7 @@
                 cache: false,
                 beforeSend: setPreload ($(".btnUserSave"))
            }) .done(function (data) {
-                getToast("success", "Success","Save data successfully");
+                getToast("success", "Success","Saved data successfully");
                 $(".btnUserSave").html("Save").attr("disabled", false);
                 getUser()
                 $("#userForm")[0].reset()

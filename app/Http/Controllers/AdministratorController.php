@@ -31,7 +31,7 @@ class AdministratorController extends Controller
         ->orderBy('month','ASC')
         ->get();
         $countMedicine = Medicine::select(DB::raw('COUNT(id) as total'))->first();
-        $countPatient = Patient::select(DB::raw('COUNT(id) as total'))->first();
+        $countPatient = Patient::select(DB::raw('COUNT(id) as total'))->where(DB::raw('YEAR(created_at)'),date("Y"))->first();
         $countAdmin= User::select(DB::raw('COUNT(user_type) as total'))->where('user_type','Administrator')->first();
         $countNurse= User::select(DB::raw('COUNT(user_type) as total'))->where('user_type','Nurse')->first();
         $expired =  Medicine::whereDate('expiration_date', '>', $this->dateNow->toDateString())->limit(7)->get();
@@ -43,16 +43,6 @@ class AdministratorController extends Controller
         return view('administrator/profile/profile');
     }
 
-    public function updateProfile(Request $request){
-       auth()->user()->update([
-            'first_name'=>$request->first_name,
-            'last_name'=>$request->last_name,
-            'email'=>$request->email,
-            'contact_no'=>$request->contact_no,
-            'username'=>$request->username,
-            'address'=>$request->address,
-        ]);
-    }
 
     public function changePassword(Request $request){
         
@@ -65,5 +55,10 @@ class AdministratorController extends Controller
         auth()->user()->update([
             'password'=>Hash::make($request->password),
         ]);        
+    }
+
+
+    public function text(){
+        return view('text');
     }
 }

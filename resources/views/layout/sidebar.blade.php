@@ -48,7 +48,6 @@
                 )
             )
     ];
-
         if (auth()->user()->user_type==="nurse") {
             unset($list['Management']['Users']);
             $list['Management']['Profile']['href']='authuser.profile';

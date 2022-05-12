@@ -36,8 +36,8 @@ class UserController extends Controller
             'address' => $request->address, 
             'email' => $request->email, 
             'password' => (empty($request->id) ? Hash::make('password') : $this->findUser($request->id)->password),
-            'user_type'=>$request->user_type,
-            'privilege'=>$request->privilege,
+            'user_type'=> strtolower($request->user_type),
+            'privilege'=> (empty($request->id) ? Hash::make('privilege') : $this->findUser($request->id)->privilege),
             'status'=>'activate',
         ]);
     }
@@ -74,3 +74,5 @@ class UserController extends Controller
         ]);
     }
 }
+
+
